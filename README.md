@@ -41,6 +41,13 @@ assets/vendor/      qrcode.js (MIT, Kazuhiko Arase) untuk QR offline
 
 Edit objek `PROFIL` di `data.js` (peran, bio, biodata, keahlian, bidang, sosial). Baris yang dikosongkan tidak ditampilkan. Ganti foto dengan menimpa `assets/foto-profil.webp` (rasio 4:5).
 
+## Materi promosi (folder `promo/`)
+
+- `status-1080x1920.png`: gambar status WA/IG/FB Story.
+- `status-video-1080x1920.mp4`: video status 21 detik (6 cuplikan demo).
+- `pratinjau-link-1200x630.jpg`: gambar pratinjau saat link dibagikan (juga dipakai sebagai `og:image`).
+- `src/`: template HTML untuk merender ulang bila angka atau alamat berubah.
+
 ## Publikasi di GitHub Pages
 
 1. Buka **Settings → Pages** di repo ini.

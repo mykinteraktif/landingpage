@@ -1,0 +1,136 @@
+<!doctype html>
+<!-- Template status 1080x1920. Render: ?mode=image (mosaik) | ?mode=video (layar kosong untuk ditimpa video) -->
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #0f1d3a; --accent: #f5b335; --ink: #3b2600; --muted: #b9c4dc; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: "Plus Jakarta Sans", sans-serif; color: #fff; position: relative;
+    background:
+      radial-gradient(60% 35% at 85% 8%, rgba(245,179,53,.30), transparent 70%),
+      radial-gradient(70% 40% at 0% 55%, rgba(60,110,230,.35), transparent 70%),
+      linear-gradient(180deg, #13244a 0%, #0b1530 55%, #08101f 100%);
+  }
+  /* pola titik halus */
+  body::before {
+    content: ""; position: absolute; inset: 0; opacity: .18;
+    background-image: radial-gradient(#7d95c9 1.4px, transparent 1.6px); background-size: 34px 34px;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 45%, transparent 70%, #000 100%);
+  }
+  .wrap { position: absolute; inset: 0; padding: 0 72px; }
+
+  .brand { position: absolute; top: 196px; left: 72px; display: flex; align-items: center; gap: 18px; font-size: 40px; font-weight: 600; }
+  .brand b { font-weight: 800; }
+  .logo { width: 72px; height: 72px; border-radius: 20px; background: var(--accent); display: grid; place-items: center; }
+  .logo svg { width: 46px; fill: none; stroke: var(--navy); stroke-width: 7.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .eyebrow { position: absolute; top: 312px; left: 72px; font-size: 28px; font-weight: 800; letter-spacing: .14em; color: var(--accent); }
+  h1 { position: absolute; top: 358px; left: 72px; right: 60px; font-size: 100px; line-height: 1.04; font-weight: 800; letter-spacing: -.03em; }
+  .hl { color: var(--navy); background: var(--accent); padding: 0 18px 4px; border-radius: 18px; display: inline-block; transform: rotate(-2deg); }
+
+  /* jendela browser: layar 960x600 di x=60, y=800 */
+  .win {
+    position: absolute; left: 60px; top: 742px; width: 960px; border-radius: 28px; overflow: hidden;
+    background: #16264a; box-shadow: 0 40px 80px -20px rgba(0,0,0,.7), 0 0 0 2px rgba(255,255,255,.08);
+  }
+  .bar { height: 58px; display: flex; align-items: center; gap: 12px; padding: 0 24px; }
+  .bar i { width: 16px; height: 16px; border-radius: 50%; background: #ff5f57; }
+  .bar i:nth-child(2) { background: #febc2e; } .bar i:nth-child(3) { background: #28c840; }
+  .bar span { margin-left: 14px; flex: 1; padding: 6px 20px; border-radius: 10px; background: rgba(255,255,255,.08); color: var(--muted); font-size: 24px; font-weight: 600; }
+  .screen { width: 960px; height: 600px; background: #0b1222; position: relative; }
+  .mosaic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 8px; height: 100%; }
+  .mosaic img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 10px; }
+  body.video .mosaic { display: none; }
+
+  .badge {
+    position: absolute; z-index: 3; padding: 16px 26px; border-radius: 20px; font-size: 30px; font-weight: 800;
+    background: #fff; color: var(--navy); box-shadow: 0 20px 40px -10px rgba(0,0,0,.5);
+  }
+  .badge--a { top: 714px; right: 40px; transform: rotate(3deg); }
+  .badge--b { top: 1330px; left: 36px; transform: rotate(-3deg); background: var(--accent); color: var(--ink); }
+
+  .stats { position: absolute; top: 1430px; left: 72px; right: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .stats div { background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.1); border-radius: 24px; padding: 20px 26px; }
+  .stats b { display: block; font-size: 64px; font-weight: 800; line-height: 1; color: var(--accent); }
+  .stats span { font-size: 26px; color: var(--muted); font-weight: 600; }
+
+  .cta {
+    position: absolute; top: 1590px; left: 72px; right: 72px; display: flex; align-items: center; gap: 26px;
+    background: #fff; color: var(--navy); border-radius: 30px; padding: 22px 22px 22px 22px;
+  }
+  .cta .foto { width: 110px; height: 110px; border-radius: 22px; flex: none; object-fit: cover; object-position: top; background: linear-gradient(160deg, #22407e, var(--navy)); }
+  .cta .txt { flex: 1; min-width: 0; }
+  .cta small { display: block; font-size: 22px; font-weight: 700; color: #5a6680; }
+  .cta strong { display: block; font-size: 29px; font-weight: 800; line-height: 1.2; }
+  .cta .url { display: inline-block; margin-top: 8px; font-size: 25px; font-weight: 800; color: #2c5be0; }
+  .qr { width: 132px; height: 132px; flex: none; }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  .qr path { fill: var(--navy); }
+
+  .brand { top: 56px; left: 64px; font-size: 30px; } .logo { width: 56px; height: 56px; border-radius: 16px; } .logo svg { width: 36px; }
+  .eyebrow { top: 146px; left: 64px; font-size: 18px; }
+  h1 { top: 180px; left: 64px; right: auto; width: 560px; font-size: 64px; }
+  .hl { border-radius: 12px; padding: 0 12px 3px; }
+  .win { left: 640px; top: 70px; width: 600px; border-radius: 20px; transform: rotate(-3deg); }
+  .bar { height: 40px; } .bar i { width: 11px; height: 11px; } .bar span { font-size: 15px; padding: 4px 12px; }
+  .screen { width: 600px; height: 375px; } .mosaic { gap: 5px; padding: 5px; } .mosaic img { border-radius: 6px; }
+  .badge, .stats, .qr { display: none; }
+  .cta { top: auto; bottom: 48px; left: 64px; right: auto; width: 640px; padding: 14px; gap: 16px; border-radius: 22px; }
+  .cta .foto { width: 72px; height: 72px; border-radius: 14px; }
+  .cta small { font-size: 15px; } .cta strong { font-size: 21px; } .cta .url { font-size: 18px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <span class="logo"><svg viewBox="0 0 64 64"><path d="M16 44V20l16 14 16-14v24"/></svg></span>
+    <span>MYK <b>Interaktif</b></span>
+  </div>
+  <p class="eyebrow">MEDIA PEMBELAJARAN INTERAKTIF · SMK</p>
+  <h1>Belajar lewat <span class="hl">praktik</span>, langsung dari browser.</h1>
+
+  <span class="badge badge--a">▶ 18 karya siap pakai</span>
+  <div class="win">
+    <div class="bar"><i></i><i></i><i></i><span>mykinteraktif.github.io/landingpage</span></div>
+    <div class="screen">
+      <div class="mosaic">
+        <img src="../../assets/thumbs/kendaraanringan4tak2tak.webp">
+        <img src="../../assets/thumbs/cybersecurity.webp">
+        <img src="../../assets/thumbs/grammarquest.webp">
+        <img src="../../assets/thumbs/tourmasjid.webp">
+        <img src="../../assets/thumbs/simulasimikrotik.webp">
+        <img src="../../assets/thumbs/busanaadatjawa.webp">
+        <img src="../../assets/thumbs/jaringandasar.webp">
+        <img src="../../assets/thumbs/skantrirace.webp">
+        <img src="../../assets/thumbs/mrbuyung.webp">
+      </div>
+    </div>
+  </div>
+  <span class="badge badge--b">✓ Gratis · tanpa instal</span>
+
+  <div class="stats">
+    <div><b>13</b><span>Lab maya</span></div>
+    <div><b>2</b><span>Game edukasi</span></div>
+    <div><b>14</b><span>Mata pelajaran</span></div>
+  </div>
+
+  <div class="cta">
+    <img class="foto" src="../../assets/foto-profil.webp" alt="">
+    <div class="txt">
+      <small>Karya guru SMKS PGRI Singosari</small>
+      <strong>Mohammad Yusron Kholish, S.Kom</strong>
+      <span class="url">mykinteraktif.github.io/landingpage</span>
+    </div>
+    <div class="qr" id="qr"></div>
+  </div>
+</div>
+<script>
+  if (location.search.includes("video")) document.body.classList.add("video");
+  fetch("qr.svg").then(r => r.text()).then(t => (document.getElementById("qr").innerHTML = t)).catch(() => {});
+</script>
+</body>
+</html>
