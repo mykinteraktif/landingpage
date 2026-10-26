@@ -3,7 +3,9 @@
    1. Tampilkan data dari data.js (langsung, tanpa menunggu)
    2. Ambil daftar repo dari GitHub API → repo baru yang belum
       ada di data.js ikut tampil, tanggal update diperbarui
-   3. Filter kategori, pencarian, urutan, salin tautan
+   3. Filter kategori, mapel, pencarian, urutan, salin tautan
+   4. Interaksi: video pratinjau, modal demo (video / coba
+      langsung / QR), showreel hero, teater video, animasi
    ========================================================= */
 (() => {
   const USER = PROFIL.github;
@@ -18,7 +20,9 @@
 
   const $ = (s) => document.querySelector(s);
   const grid = $("#grid");
-  const state = { kat: "semua", q: "", sort: "baru" };
+  const state = { kat: "semua", q: "", sort: "baru", mapel: "" };
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   // Tanggal cadangan (dipakai bila GitHub API tidak bisa diakses)
   const TANGGAL_AWAL = {
@@ -33,6 +37,7 @@
   let items = PROYEK.map((p) => ({
     ...p,
     thumb: p.thumb ?? `${p.repo}.webp`,
+    video: p.video ?? `${p.repo}.mp4`,
     update: TANGGAL_AWAL[p.repo] || null,
     url: `https://${USER}.github.io/${p.repo}/`,
     kode: `https://github.com/${USER}/${p.repo}`,
@@ -70,11 +75,13 @@
     const tags = (p.tag || []).map((t) => `<li>${esc(t)}</li>`).join("");
     return `
       <article class="card" data-kat="${esc(p.kategori)}">
-        <a class="card__media" href="${p.url}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+        <button class="card__media" type="button" data-demo="${esc(p.repo)}" aria-label="Lihat demo ${esc(p.judul)}">
           ${media}
+          ${p.video ? `<video muted loop playsinline preload="none" data-src="assets/video/${esc(p.video)}"></video>` : ""}
           <span class="badge">${esc(KATEGORI[p.kategori] || "Proyek")}</span>
           ${p.unggulan ? '<span class="star">★ Unggulan</span>' : ""}
-        </a>
+          <span class="card__play" aria-hidden="true">${p.video ? "▶ Lihat demo" : "🖱 Coba langsung"}</span>
+        </button>
         <div class="card__body">
           <div class="card__meta">
             ${p.mapel ? `<b>${esc(p.mapel)}</b>` : ""}
@@ -100,7 +107,9 @@
 
   function render() {
     const q = state.q.trim().toLowerCase();
-    let list = items.filter((p) => state.kat === "semua" || p.kategori === state.kat);
+    let list = items.filter(
+      (p) => (state.kat === "semua" || p.kategori === state.kat) && (!state.mapel || p.mapel === state.mapel)
+    );
     if (q) {
       list = list.filter((p) =>
         [p.judul, p.mapel, p.kelas, p.deskripsi, p.repo, ...(p.tag || [])].join(" ").toLowerCase().includes(q)
@@ -113,6 +122,18 @@
 
     grid.innerHTML = list.map(kartu).join("");
     $("#empty").hidden = list.length > 0;
+    tampil = list;
+  }
+
+  // urutan kartu yang sedang tampil (untuk tombol sebelumnya/berikutnya di modal)
+  let tampil = [];
+
+  function renderMapel() {
+    const sel = $("#mapel");
+    const daftar = [...new Set(items.map((p) => p.mapel).filter(Boolean))].sort((a, b) => a.localeCompare(b, "id"));
+    sel.innerHTML =
+      '<option value="">Semua mapel</option>' +
+      daftar.map((m) => `<option ${m === state.mapel ? "selected" : ""}>${esc(m)}</option>`).join("");
   }
 
   function renderChips() {
@@ -127,17 +148,11 @@
   }
 
   function renderStats() {
-    $("#stTotal").textContent = items.length;
-    $("#stLab").textContent = items.filter((p) => p.kategori === "lab").length;
-    $("#stMapel").textContent = new Set(items.filter((p) => p.kategori !== "web").map((p) => p.mapel)).size;
+    hitung($("#stTotal"), items.length);
+    hitung($("#stLab"), items.filter((p) => p.kategori === "lab").length);
+    hitung($("#stMapel"), new Set(items.filter((p) => p.kategori !== "web").map((p) => p.mapel)).size);
   }
 
-  function renderHero() {
-    const pilih = items.filter((p) => p.unggulan && p.thumb).slice(0, 3);
-    $("#heroStack").innerHTML = pilih
-      .map((p) => `<img src="assets/thumbs/${esc(p.thumb)}" alt="" width="640" height="400">`)
-      .join("");
-  }
 
   const IKON = {
     linkedin: ["LinkedIn", '<path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6h.1c.5-.9 1.6-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.5V9h3.6v11.5zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0z"/>'],
@@ -183,6 +198,7 @@
   function renderAll() {
     renderPstats();
     renderChips();
+    renderMapel();
     renderStats();
     render();
   }
@@ -234,6 +250,7 @@
           deskripsi: r.description || "Karya terbaru, deskripsi menyusul.",
           tag: ["Baru"],
           thumb: null,
+          video: null,
           update: r.pushed_at,
           url: r.homepage || `https://${USER}.github.io/${r.name}/`,
           kode: `https://github.com/${USER}/${r.name}`,
@@ -264,11 +281,9 @@
   });
 
   $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
+  $("#mapel").addEventListener("change", (e) => { state.mapel = e.target.value; render(); });
 
-  grid.addEventListener("click", async (e) => {
-    const b = e.target.closest("[data-copy]");
-    if (!b) return;
-    const url = b.dataset.copy;
+  async function salin(url) {
     try {
       await navigator.clipboard.writeText(url);
     } catch (_) {
@@ -276,7 +291,259 @@
       document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove();
     }
     toast("Tautan disalin. Siap dibagikan ke siswa!");
+  }
+
+  grid.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-copy]");
+    if (c) return salin(c.dataset.copy);
+    const d = e.target.closest("[data-demo]");
+    if (d) bukaDemo(d.dataset.demo);
   });
+
+  /* ---------- video pratinjau saat kursor di atas kartu ---------- */
+  if (finePointer) {
+    grid.addEventListener("mouseover", (e) => {
+      const m = e.target.closest(".card__media");
+      const v = m && m.querySelector("video");
+      if (!v || m.contains(e.relatedTarget)) return;
+      if (!v.src) v.src = v.dataset.src;
+      v.currentTime = 0;
+      v.play().then(() => m.classList.add("is-playing")).catch(() => {});
+    });
+    grid.addEventListener("mouseout", (e) => {
+      const m = e.target.closest(".card__media");
+      const v = m && m.querySelector("video");
+      if (!v || m.contains(e.relatedTarget)) return;
+      v.pause();
+      m.classList.remove("is-playing");
+    });
+  }
+
+  /* ---------- efek kartu miring mengikuti kursor ---------- */
+  if (finePointer && !reduceMotion) {
+    grid.addEventListener("pointermove", (e) => {
+      const c = e.target.closest(".card");
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      c.style.transform = `perspective(900px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg) translateY(-4px)`;
+    });
+    grid.addEventListener("pointerout", (e) => {
+      const c = e.target.closest(".card");
+      if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
+    });
+  }
+
+  /* ---------- modal demo ---------- */
+  const modal = $("#modal");
+  const mVideo = $("#mVideo");
+  const mFrame = $("#mFrame");
+  let aktif = null;
+
+  function cari(repo) {
+    return items.find((p) => p.repo === repo);
+  }
+
+  function pilihTab(tab) {
+    if (tab === "qr" && !window.qrcode) tab = "video";
+    if (tab === "video" && !aktif.video) tab = "live";
+    modal.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === tab));
+    modal.querySelectorAll("[data-pane]").forEach((el) => (el.hidden = el.dataset.pane !== tab));
+    $("#mNoVideo").hidden = true;
+    if (tab === "video") {
+      mVideo.play().catch(() => {});
+    } else {
+      mVideo.pause();
+    }
+    if (tab === "live" && mFrame.dataset.src !== aktif.url) {
+      mFrame.src = mFrame.dataset.src = aktif.url;
+    }
+    if (tab === "qr") {
+      const qr = qrcode(0, "M");
+      qr.addData(aktif.url);
+      qr.make();
+      $("#mQr").innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+    }
+  }
+
+  function isiModal(p, tab) {
+    const tabSekarang = modal.querySelector('[data-tab][aria-selected="true"]').dataset.tab;
+    aktif = p;
+    $("#mJudul").textContent = p.judul;
+    $("#mMeta").textContent = [KATEGORI[p.kategori], p.mapel, p.kelas].filter(Boolean).join(" · ");
+    $("#mDesk").textContent = p.deskripsi || "";
+    $("#mOpen").href = p.url;
+    $("#mUrl").textContent = p.url;
+    mFrame.removeAttribute("src");
+    delete mFrame.dataset.src;
+    if (p.video) {
+      mVideo.src = `assets/video/${p.video}`;
+      mVideo.poster = p.thumb ? `assets/thumbs/${p.thumb}` : "";
+    } else {
+      mVideo.removeAttribute("src");
+    }
+    pilihTab(tab || tabSekarang);
+  }
+
+  function bukaDemo(repo, tab) {
+    const p = cari(repo);
+    if (!p) return;
+    pauseLatar();
+    if (!modal.open) modal.showModal();
+    isiModal(p, tab || "video");
+  }
+
+  function geser(arah) {
+    const daftar = tampil.length ? tampil : items;
+    const i = daftar.findIndex((p) => p.repo === aktif.repo);
+    isiModal(daftar[(i + arah + daftar.length) % daftar.length]);
+  }
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.closest("[data-close]")) modal.close();
+    const t = e.target.closest("[data-tab]");
+    if (t) pilihTab(t.dataset.tab);
+  });
+  modal.addEventListener("close", () => {
+    mVideo.pause();
+    mFrame.removeAttribute("src"); // hentikan suara lab
+    delete mFrame.dataset.src;
+    lanjutLatar();
+  });
+  modal.addEventListener("keydown", (e) => {
+    if (e.target.closest("input, textarea")) return;
+    if (e.key === "ArrowRight") geser(1);
+    if (e.key === "ArrowLeft") geser(-1);
+  });
+  $("#mPrev").addEventListener("click", () => geser(-1));
+  $("#mNext").addEventListener("click", () => geser(1));
+  $("#mCopy").addEventListener("click", () => salin(aktif.url));
+
+  $("#btnAcak").addEventListener("click", () => {
+    const pool = items.filter((p) => p.kategori !== "web");
+    bukaDemo(pool[Math.floor(Math.random() * pool.length)].repo);
+  });
+
+  /* ---------- showreel hero ---------- */
+  const reelVideo = $("#reelVideo");
+  const reelList = () => items.filter((p) => p.unggulan && p.video);
+  let reelIdx = 0;
+
+  function putarReel(i) {
+    const list = reelList();
+    if (!list.length) return;
+    reelIdx = (i + list.length) % list.length;
+    const p = list[reelIdx];
+    reelVideo.src = `assets/video/${p.video}`;
+    reelVideo.poster = p.thumb ? `assets/thumbs/${p.thumb}` : "";
+    $("#reelJudul").textContent = p.judul;
+    $("#reelKat").textContent = [KATEGORI[p.kategori], p.mapel].filter(Boolean).join(" · ");
+    $("#reelUrl").textContent = `${USER}.github.io/${p.repo}`;
+    $("#reelDots").querySelectorAll("button").forEach((b, j) => b.setAttribute("aria-selected", j === reelIdx));
+    if (!reduceMotion) reelVideo.play().catch(() => {});
+  }
+
+  function siapkanReel() {
+    $("#reelDots").innerHTML = reelList()
+      .map((p, j) => `<button type="button" role="tab" aria-label="${esc(p.judul)}" data-i="${j}"></button>`)
+      .join("");
+    putarReel(0);
+  }
+
+  reelVideo.addEventListener("ended", () => putarReel(reelIdx + 1));
+  reelVideo.addEventListener("timeupdate", () => {
+    if (reelVideo.duration) $("#reelProg").style.width = `${(reelVideo.currentTime / reelVideo.duration) * 100}%`;
+  });
+  $("#reelDots").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) putarReel(+b.dataset.i);
+  });
+  $("#reelOpen").addEventListener("click", () => bukaDemo(reelList()[reelIdx].repo));
+
+  /* ---------- teater video ---------- */
+  const thVideo = $("#thVideo");
+  const thList = () => items.filter((p) => p.video);
+  let thIdx = 0;
+
+  function renderPlaylist() {
+    $("#playlist").innerHTML = thList()
+      .map(
+        (p, j) => `<li><button type="button" data-i="${j}" aria-current="${j === thIdx}">
+          <img src="assets/thumbs/${esc(p.thumb)}" alt="" loading="lazy" width="96" height="60">
+          <span><b>${esc(p.judul)}</b><small>${esc(p.mapel || "")}</small></span>
+        </button></li>`
+      )
+      .join("");
+  }
+
+  function putarTeater(i, mulai) {
+    const list = thList();
+    thIdx = (i + list.length) % list.length;
+    const p = list[thIdx];
+    thVideo.src = `assets/video/${p.video}`;
+    thVideo.poster = p.thumb ? `assets/thumbs/${p.thumb}` : "";
+    $("#thJudul").textContent = p.judul;
+    $("#thMeta").textContent = [KATEGORI[p.kategori], p.mapel, p.kelas].filter(Boolean).join(" · ");
+    $("#thDesk").textContent = p.deskripsi || "";
+    $("#playlist").querySelectorAll("button").forEach((b, j) => b.setAttribute("aria-current", j === thIdx));
+    const li = $("#playlist").children[thIdx];
+    if (li && mulai) li.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+    if (mulai) thVideo.play().catch(() => {});
+  }
+
+  $("#playlist").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) putarTeater(+b.dataset.i, true);
+  });
+  thVideo.addEventListener("ended", () => {
+    if ($("#thAuto").checked) putarTeater(thIdx + 1, true);
+  });
+  $("#thCoba").addEventListener("click", () => bukaDemo(thList()[thIdx].repo, "live"));
+
+  // video latar berhenti saat modal terbuka / tidak terlihat (hemat kuota & baterai)
+  let teaterJalan = false;
+  function pauseLatar() {
+    teaterJalan = !thVideo.paused;
+    reelVideo.pause();
+    thVideo.pause();
+  }
+  function lanjutLatar() {
+    if (!reduceMotion && reelTerlihat) reelVideo.play().catch(() => {});
+    if (teaterJalan) thVideo.play().catch(() => {});
+  }
+  let reelTerlihat = true;
+  new IntersectionObserver(([en]) => {
+    reelTerlihat = en.isIntersecting;
+    if (reelTerlihat && !modal.open && !reduceMotion) reelVideo.play().catch(() => {});
+    else reelVideo.pause();
+  }).observe($("#reel"));
+  new IntersectionObserver(([en]) => {
+    if (!en.isIntersecting) thVideo.pause();
+  }).observe(thVideo);
+
+  /* ---------- animasi muncul saat scroll & angka berjalan ---------- */
+  const io = new IntersectionObserver(
+    (ens) =>
+      ens.forEach((en) => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("in");
+        io.unobserve(en.target);
+      }),
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  function hitung(el, target) {
+    if (reduceMotion) return (el.textContent = target);
+    const t0 = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / 900);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
 
   // Tema terang/gelap (disimpan di perangkat pengunjung)
   const root = document.documentElement;
@@ -291,8 +558,10 @@
 
   $("#yr").textContent = new Date().getFullYear();
 
-  renderHero();
   renderProfil();
   renderAll();
+  siapkanReel();
+  renderPlaylist();
+  putarTeater(0, false);
   sinkron();
 })();
