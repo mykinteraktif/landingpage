@@ -16,6 +16,39 @@ const PROFIL = {
   nama: "Mohammad Yusron Kholish, S.Kom",
   sekolah: "SMKS PGRI Singosari",
   github: "mykinteraktif",
+
+  /* ---- Biodata & portofolio (tampil di bagian "Profil") ----
+     Baris yang dikosongkan ("") otomatis tidak ditampilkan. */
+  foto: "assets/foto-profil.webp",
+  peran: "Guru SMK · Pengembang Media Pembelajaran Interaktif",
+  bio:
+    "Pendidik di SMKS PGRI Singosari yang fokus mengubah materi praktik menjadi lab maya, simulasi, dan game edukasi berbasis web. Tujuannya sederhana: siswa bisa mencoba, salah, dan mengulang dengan aman, kapan saja, cukup dari browser HP atau laptop.",
+  biodata: [
+    ["Nama", "Mohammad Yusron Kholish, S.Kom"],
+    ["Instansi", "SMKS PGRI Singosari, Kab. Malang"],
+    ["Pendidikan", "S1 Ilmu Komputer (S.Kom) · Universitas Widyagama Malang"],
+    ["Bidang", "Teknik Komputer & Jaringan, Media Pembelajaran Digital"],
+  ],
+  keahlian: [
+    "Lab Maya / Virtual Lab",
+    "Game Edukasi",
+    "HTML · CSS · JavaScript",
+    "Three.js (3D Web)",
+    "Jaringan Komputer & MikroTik",
+    "Cyber Security",
+    "Desain Visual Pembelajaran",
+    "Perangkat Ajar Kurikulum Merdeka",
+  ],
+  // Program keahlian / mapel yang sudah dibuatkan media
+  bidang: [
+    "TJKT", "Teknik Otomotif", "Teknik Ketenagalistrikan", "MPLB", "DKV", "RPL",
+    "Matematika", "Sejarah", "Bahasa Inggris", "Bahasa Jawa", "PAI dan Budi Pekerti",
+  ],
+  sosial: {
+    linkedin: "https://www.linkedin.com/in/mohammad-yusron-kholish-711801108/",
+    instagram: "https://www.instagram.com/myusronk/",
+    github: "https://github.com/mykinteraktif",
+  },
 };
 
 const PROYEK = [

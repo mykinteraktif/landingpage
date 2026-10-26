@@ -139,7 +139,49 @@
       .join("");
   }
 
+  const IKON = {
+    linkedin: ["LinkedIn", '<path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6h.1c.5-.9 1.6-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.5V9h3.6v11.5zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0z"/>'],
+    instagram: ["Instagram", '<path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/>'],
+    github: ["GitHub", '<path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/>'],
+  };
+
+  function renderProfil() {
+    const P = PROFIL;
+    $("#pfNama").textContent = P.nama;
+    $("#pfPeran").textContent = P.peran || "";
+    $("#pfBio").textContent = P.bio || "";
+    if (P.foto) $("#pfFoto").src = P.foto;
+
+    $("#pfBiodata").innerHTML = (P.biodata || [])
+      .filter(([, v]) => v)
+      .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
+      .join("");
+
+    $("#pfSosial").innerHTML = Object.entries(P.sosial || {})
+      .filter(([k, url]) => url && IKON[k])
+      .map(([k, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener" aria-label="${IKON[k][0]}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">${IKON[k][1]}</svg>${IKON[k][0]}</a>`)
+      .join("");
+
+    $("#pfKeahlian").innerHTML = (P.keahlian || []).map((t) => `<li>${esc(t)}</li>`).join("");
+    $("#pfBidang").innerHTML = (P.bidang || []).map((t) => `<li>${esc(t)}</li>`).join("");
+  }
+
+  // Angka portofolio: hanya karya yang disusun sendiri (tanpa field "penyusun")
+  function renderPstats() {
+    const milik = items.filter((p) => !p.penyusun);
+    const n = (k) => milik.filter((p) => p.kategori === k).length;
+    const data = [
+      [milik.length, "Karya dipublikasikan"],
+      [n("lab"), "Lab maya"],
+      [n("game"), "Game edukasi"],
+      [(PROFIL.bidang || []).length, "Program & mapel"],
+    ];
+    $("#pfStats").innerHTML = data.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join("");
+  }
+
   function renderAll() {
+    renderPstats();
     renderChips();
     renderStats();
     render();
@@ -250,6 +292,7 @@
   $("#yr").textContent = new Date().getFullYear();
 
   renderHero();
+  renderProfil();
   renderAll();
   sinkron();
 })();
