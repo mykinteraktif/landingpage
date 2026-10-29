@@ -15,7 +15,7 @@
     game: "Game Edukasi",
     web: "Website & RPL",
   };
-  const CACHE_KEY = "myk-repos-v1";
+  const CACHE_KEY = "myk-repos-v2";
   const CACHE_MS = 60 * 60 * 1000; // 1 jam
 
   const $ = (s) => document.querySelector(s);
@@ -226,7 +226,7 @@
         if (!res.ok) throw new Error(res.status);
         repos = (await res.json()).map((r) => ({
           name: r.name, description: r.description, pushed_at: r.pushed_at,
-          homepage: r.homepage, has_pages: r.has_pages, fork: r.fork, archived: r.archived, private: r.private,
+          homepage: r.homepage, has_pages: r.has_pages, fork: r.fork, archived: r.archived, private: r.private, size: r.size,
         }));
         writeCache(repos);
       }
@@ -235,6 +235,7 @@
       let baru = 0;
       for (const r of repos) {
         if (r.private || r.fork || ABAIKAN.includes(r.name)) continue;
+        if (r.size === 0) continue; // repo masih kosong: tunggu sampai ada isinya
         const ada = kenal.get(r.name.toLowerCase());
         if (ada) {
           ada.update = r.pushed_at;
