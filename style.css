@@ -313,6 +313,8 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .bio dt { color: var(--muted); font-size: .9rem; font-weight: 600; background: var(--surface-2); }
 .bio dd { font-weight: 600; }
 .bio dt:nth-last-of-type(1), .bio dd:nth-last-of-type(1) { border-bottom: 0; }
+.bio dd a { color: var(--brand); text-decoration: none; }
+.bio dd a:hover { text-decoration: underline; }
 .sub { font-size: 1rem; margin: 28px 0 12px; }
 .pstats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .pstats div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }

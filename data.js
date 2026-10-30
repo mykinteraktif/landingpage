@@ -28,6 +28,8 @@ const PROFIL = {
     ["Instansi", "SMKS PGRI Singosari, Kab. Malang"],
     ["Pendidikan", "S1 Ilmu Komputer (S.Kom) · Universitas Widyagama Malang"],
     ["Bidang", "Teknik Komputer & Jaringan, Media Pembelajaran Digital"],
+    ["No. WA", "081532003456"],
+    ["Email", "yusronkholish@gmail.com"],
   ],
   keahlian: [
     "Lab Maya / Virtual Lab",
