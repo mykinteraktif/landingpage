@@ -401,11 +401,61 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .card { animation: kartu .5s ease both; }
 @keyframes kartu { from { opacity: 0; transform: translateY(16px); } }
 
+/* ---------- KONTAK ---------- */
+.profile__contact { display: grid; gap: 8px; margin-top: 14px; }
+.pc {
+  display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px;
+  font-weight: 700; text-decoration: none; background: var(--surface); border: 1px solid var(--line); color: var(--text);
+}
+.pc svg { width: 20px; height: 20px; fill: currentColor; }
+.pc--wa { background: #1fa855; border-color: #1fa855; color: #fff; }
+.pc:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.bio dd a { color: var(--brand); text-decoration: none; }
+.bio dd a:hover { text-decoration: underline; }
+
+.contact {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; padding: clamp(28px, 5vw, 48px);
+  border-radius: 28px; color: #fff;
+  background: radial-gradient(70% 90% at 100% 0%, rgba(245, 179, 53, .28), transparent 60%), linear-gradient(140deg, #1b3266, var(--navy));
+  box-shadow: var(--shadow);
+}
+.contact .eyebrow { color: var(--accent); }
+.contact h2 { color: #fff; }
+.contact__text p:last-child { margin: 0; color: #c7d0e4; font-size: 1.05rem; }
+.contact__list { display: grid; gap: 12px; }
+.contact__row { display: flex; gap: 8px; }
+.contact__row .contact__item { flex: 1; min-width: 0; }
+.contact__row .icon-btn { width: 54px; height: auto; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); color: #fff; }
+.contact__item {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; text-decoration: none;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff; transition: background .2s, transform .2s;
+}
+.contact__item:hover { background: rgba(255,255,255,.14); transform: translateY(-2px); }
+.contact__item small { display: block; font-size: .8rem; color: #c7d0e4; font-weight: 600; }
+.contact__item b { font-size: 1.1rem; overflow-wrap: anywhere; }
+.contact__item > span:nth-child(2) { min-width: 0; }
+.contact__ic { width: 46px; height: 46px; flex: none; border-radius: 12px; display: grid; place-items: center; background: #fff; color: var(--navy); }
+.contact__ic svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.contact__item--wa { background: #1fa855; border-color: #1fa855; }
+.contact__item--wa:hover { background: #22b85d; }
+.contact__item--wa .contact__ic { color: #1fa855; }
+.contact__item--wa .contact__ic svg { fill: currentColor; stroke: none; }
+.contact__item--wa small { color: #dcfce7; }
+.contact__go { margin-left: auto; font-weight: 800; font-size: .9rem; white-space: nowrap; }
+
+.wa-float {
+  position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 58px; height: 58px; border-radius: 50%;
+  display: grid; place-items: center; background: #1fa855; color: #fff;
+  box-shadow: 0 10px 24px -6px rgba(31, 168, 85, .6); transition: transform .2s;
+}
+.wa-float:hover { transform: scale(1.08); }
+.wa-float svg { width: 30px; height: 30px; fill: currentColor; }
+
 /* ---------- FOOTER ---------- */
 .foot { border-top: 1px solid var(--line); padding: 24px 0; font-size: .9rem; color: var(--muted); }
 .foot__in { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .foot p { margin: 0; }
-.foot__links { display: flex; gap: 16px; }
+.foot__links { display: flex; gap: 16px; flex-wrap: wrap; }
 .foot a { text-decoration: none; font-weight: 600; }
 .foot a:hover { color: var(--text); }
 
@@ -425,6 +475,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
   .playlist { display: flex; gap: 6px; max-height: none; overflow-x: auto; }
   .playlist li { flex: 0 0 220px; }
   .steps { grid-template-columns: 1fr; }
+  .contact { grid-template-columns: 1fr; gap: 24px; }
+  .foot { padding-bottom: 96px; }
+  .contact__item { gap: 12px; padding: 12px; }
+  .contact__item b { font-size: 1rem; }
+  .contact__ic { width: 40px; height: 40px; }
   .profile__in { grid-template-columns: 1fr; gap: 32px; }
   .profile__card { position: static; max-width: 340px; width: 100%; margin-inline: auto; }
   .pstats { grid-template-columns: repeat(2, 1fr); }
@@ -436,6 +491,9 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
   .stats dd { font-size: 1.6rem; }
   .toolbar__right, .search { width: 100%; min-width: 0; }
   .search { flex: 1; }
+  .contact { padding: 26px 18px; border-radius: 22px; }
+  .contact__row .icon-btn { width: 46px; }
+  .contact__item b { font-size: .9rem; }
   .bio { grid-template-columns: 1fr; }
   .bio dt { padding-bottom: 4px; border-bottom: 0; }
   .bio dd { padding-top: 0; background: var(--surface-2); }

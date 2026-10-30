@@ -157,8 +157,19 @@
   const IKON = {
     linkedin: ["LinkedIn", '<path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6h.1c.5-.9 1.6-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.5V9h3.6v11.5zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0z"/>'],
     instagram: ["Instagram", '<path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/>'],
+    whatsapp: ["WhatsApp", '<path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 0 1 12 2.2a9.8 9.8 0 0 1 0 19.6zM12 0a11.9 11.9 0 0 0-10.2 18L0 24l6.2-1.6A11.9 11.9 0 1 0 12 0z"/>'],
+    email: ["Email", '<path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m3 7 9 6 9-6" fill="none" stroke="currentColor" stroke-width="2"/>'],
     github: ["GitHub", '<path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/>'],
   };
+
+  /* ---------- kontak ---------- */
+  const K = PROFIL.kontak || {};
+  // "0815..." → "62815..." untuk wa.me
+  const nomorWa = (n) => String(n).replace(/\D/g, "").replace(/^0/, "62");
+  const formatWa = (n) => String(n).replace(/\D/g, "").replace(/^(\d{4})(\d{4})(\d+)$/, "$1-$2-$3");
+  const linkWa = () => `https://wa.me/${nomorWa(K.wa)}?text=${encodeURIComponent(K.pesanWa || "")}`;
+  const linkMail = () =>
+    `mailto:${K.email}?subject=${encodeURIComponent("Tentang MYK Interaktif")}`;
 
   function renderProfil() {
     const P = PROFIL;
@@ -169,8 +180,35 @@
 
     $("#pfBiodata").innerHTML = (P.biodata || [])
       .filter(([, v]) => v)
-      .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
+      .map(([k, v]) => {
+        const href = k === "WhatsApp" ? linkWa() : k === "Email" ? linkMail() : "";
+        return `<dt>${esc(k)}</dt><dd>${href ? `<a href="${esc(href)}" ${k === "WhatsApp" ? 'target="_blank" rel="noopener"' : ""}>${esc(v)}</a>` : esc(v)}</dd>`;
+      })
       .join("");
+
+    // tombol kontak di kartu foto
+    $("#pfKontak").innerHTML = [
+      K.wa && `<a class="pc pc--wa" href="${esc(linkWa())}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">${IKON.whatsapp[1]}</svg>Chat WhatsApp</a>`,
+      K.email && `<a class="pc" href="${esc(linkMail())}"><svg viewBox="0 0 24 24" aria-hidden="true">${IKON.email[1]}</svg>Kirim Email</a>`,
+    ].filter(Boolean).join("");
+
+    // bagian Kontak, footer, tombol melayang
+    const waPath = IKON.whatsapp[1].match(/d="([^"]+)"/)[1];
+    ["#icWa", "#icWa2"].forEach((s) => $(s).setAttribute("d", waPath));
+    if (K.wa) {
+      ["#ktWa", "#ftWa", "#waFloat"].forEach((s) => ($(s).href = linkWa()));
+      $("#ktWaNo").textContent = formatWa(K.wa);
+    } else {
+      ["#ktWa", "#ftWa", "#waFloat"].forEach((s) => $(s).remove());
+    }
+    if (K.email) {
+      ["#ktMail", "#ftMail"].forEach((s) => ($(s).href = linkMail()));
+      $("#ktMailTxt").textContent = K.email;
+      $("#ktMailCopy").addEventListener("click", () => salinTeks(K.email, "Alamat email disalin."));
+    } else {
+      $("#ktMail").parentElement.remove();
+      $("#ftMail").remove();
+    }
 
     $("#pfSosial").innerHTML = Object.entries(P.sosial || {})
       .filter(([k, url]) => url && IKON[k])
@@ -283,15 +321,16 @@
   $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
   $("#mapel").addEventListener("change", (e) => { state.mapel = e.target.value; render(); });
 
-  async function salin(url) {
+  async function salinTeks(teks, pesan) {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(teks);
     } catch (_) {
-      const ta = Object.assign(document.createElement("textarea"), { value: url });
+      const ta = Object.assign(document.createElement("textarea"), { value: teks });
       document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove();
     }
-    toast("Tautan disalin. Siap dibagikan ke siswa!");
+    toast(pesan);
   }
+  const salin = (url) => salinTeks(url, "Tautan disalin. Siap dibagikan ke siswa!");
 
   grid.addEventListener("click", (e) => {
     const c = e.target.closest("[data-copy]");

@@ -28,7 +28,15 @@ const PROFIL = {
     ["Instansi", "SMKS PGRI Singosari, Kab. Malang"],
     ["Pendidikan", "S1 Ilmu Komputer (S.Kom) · Universitas Widyagama Malang"],
     ["Bidang", "Teknik Komputer & Jaringan, Media Pembelajaran Digital"],
+    ["WhatsApp", "0815-3200-345"],
+    ["Email", "yusronkholish@gmail.com"],
   ],
+  // Kontak: nomor WA ditulis biasa (08...), otomatis diubah ke format wa.me
+  kontak: {
+    wa: "08153200345",
+    email: "yusronkholish@gmail.com",
+    pesanWa: "Assalamualaikum Pak Yusron, saya melihat website MYK Interaktif dan ingin bertanya tentang ",
+  },
   keahlian: [
     "Lab Maya / Virtual Lab",
     "Game Edukasi",
