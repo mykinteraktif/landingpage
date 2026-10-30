@@ -37,6 +37,8 @@ assets/vendor/      qrcode.js (MIT, Kazuhiko Arase) untuk QR offline
 2. Simpan screenshot karya sebagai `assets/thumbs/<nama-repo>.webp` (rasio 16:10) dan video demo singkat sebagai `assets/video/<nama-repo>.mp4` (16:10, tanpa suara, ±10 detik). Bisa direkam dengan perekam layar biasa lalu dikompres.
 3. Commit dan push. Tanpa langkah ini pun repo baru tetap tampil otomatis, hanya dengan kartu sederhana.
 
+> Setiap kali mengubah `style.css`, `script.js`, atau `data.js`, naikkan juga angka `?v=` di `index.html` agar browser pengunjung tidak memakai file lama dari cache.
+
 ## Mengubah biodata
 
 Edit objek `PROFIL` di `data.js` (peran, bio, biodata, keahlian, bidang, sosial). Baris yang dikosongkan tidak ditampilkan. Ganti foto dengan menimpa `assets/foto-profil.webp` (rasio 4:5).
