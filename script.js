@@ -14,6 +14,7 @@
     lab: "Lab Maya",
     game: "Game Edukasi",
     web: "Website & RPL",
+    alat: "Alat Guru",
   };
   const CACHE_KEY = "myk-repos-v2";
   const CACHE_MS = 60 * 60 * 1000; // 1 jam
@@ -26,12 +27,13 @@
 
   // Tanggal cadangan (dipakai bila GitHub API tidak bisa diakses)
   const TANGGAL_AWAL = {
-    grammarquest: "2026-10-26", skantrirace: "2026-10-21", testing: "2026-10-26",
+    grammarquest: "2026-10-26", skantrirace: "2026-10-30", testing: "2026-10-26",
     jaringandasar: "2026-10-19", colorlab4d: "2026-10-16", instalasipenerangansederhana: "2026-10-16",
     busanaadatjawa: "2026-10-16", kendaraanringan4tak2tak: "2026-10-15", seblakumkm: "2026-10-14",
     contohwebsiteumkm: "2026-10-13", cybersecurity: "2026-10-09", bongkarpasangsepedamotor: "2026-10-06",
     tourmasjid: "2026-10-05", labmayafungsigrafik: "2026-10-05", mrbuyung: "2026-10-05",
     simulasimikrotik: "2026-10-05", sosiologi: "2026-10-03", LabMayaSimulasiSuratMasuk: "2026-10-03",
+    generatorstoryboard: "2026-11-03",
   };
 
   let items = PROYEK.map((p) => ({
@@ -94,7 +96,7 @@
           ${p.penyusun ? `<span class="card__by">Penyusun: ${esc(p.penyusun)}</span>` : ""}
         </div>
         <div class="card__foot">
-          <a class="btn btn--primary" href="${p.url}" target="_blank" rel="noopener">Buka ${p.kategori === "game" ? "Game" : p.kategori === "web" ? "Website" : "Lab"} ↗</a>
+          <a class="btn btn--primary" href="${p.url}" target="_blank" rel="noopener">Buka ${{ game: "Game", web: "Website", alat: "Alat" }[p.kategori] || "Lab"} ↗</a>
           <button class="icon-btn" type="button" data-copy="${p.url}" aria-label="Salin tautan ${esc(p.judul)}" title="Salin tautan">
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
           </button>
@@ -150,7 +152,7 @@
   function renderStats() {
     hitung($("#stTotal"), items.length);
     hitung($("#stLab"), items.filter((p) => p.kategori === "lab").length);
-    hitung($("#stMapel"), new Set(items.filter((p) => p.kategori !== "web").map((p) => p.mapel)).size);
+    hitung($("#stMapel"), new Set(items.filter((p) => p.kategori === "lab" || p.kategori === "game").map((p) => p.mapel)).size);
   }
 
 

@@ -9,6 +9,7 @@
    kategori : "lab"  = Lab Maya / Virtual Lab
               "game" = Game Edukasi
               "web"  = Contoh Website / Proyek RPL
+              "alat" = Alat Bantu Guru (generator, aplikasi kerja)
    thumb    : file di folder assets/thumbs/
    ========================================================= */
 
@@ -55,6 +56,17 @@ const PROFIL = {
 
 const PROYEK = [
   {
+    repo: "generatorstoryboard",
+    judul: "Generator Rancangan Bahan Ajar",
+    kategori: "alat",
+    mapel: "Perangkat Ajar",
+    kelas: "Untuk Guru",
+    deskripsi:
+      "Susun dokumen rancangan bahan ajar digital SMK: identitas, deskripsi, flowchart, rencana implementasi, dan storyboard. Bisa diisi otomatis dengan templat atau AI, lalu diunduh sebagai Word dan PDF.",
+    tag: ["Alat Guru", "Storyboard", "Word & PDF"],
+    unggulan: true,
+  },
+  {
     repo: "grammarquest",
     judul: "Grammar Quest",
     kategori: "game",
@@ -72,8 +84,8 @@ const PROYEK = [
     mapel: "Game Sekolah",
     kelas: "Umum",
     deskripsi:
-      "Game balap mobil 3D bergaya arcade berbasis Three.js dan Vite. Seluruh model, tekstur, dan suara dibuat prosedural lewat kode.",
-    tag: ["3D", "Three.js", "Vite"],
+      "Game balap mobil 3D bergaya arcade: 4 mobil, 4 lintasan, nitro, item bonus, dan 5 lawan AI. Versi 1.2 menambah mode Multiplayer satu layar (layar terbagi) dan dua perangkat lewat kode ruang atau QR.",
+    tag: ["3D", "Three.js", "Multiplayer"],
     thumb: "skantrirace.webp",
     unggulan: true,
   },

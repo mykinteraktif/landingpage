@@ -15,6 +15,7 @@
   --lab: #1f8a70;
   --game: #c2410c;
   --web: #6d3fd1;
+  --alat: #0e7490;
   --shadow: 0 1px 2px rgba(15, 29, 58, .06), 0 8px 24px rgba(15, 29, 58, .08);
   --radius: 16px;
   color-scheme: light;
@@ -23,14 +24,14 @@
   :root:not([data-theme="light"]) {
     --bg: #0b1222; --surface: #121b30; --surface-2: #18233d; --text: #e8edf7;
     --muted: #9aa6bf; --line: #24304b; --brand: #7aa2ff; --lab: #4cc9a4;
-    --game: #ff9a62; --web: #b597ff; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    --game: #ff9a62; --web: #b597ff; --alat: #5ad1e6; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0b1222; --surface: #121b30; --surface-2: #18233d; --text: #e8edf7;
   --muted: #9aa6bf; --line: #24304b; --brand: #7aa2ff; --lab: #4cc9a4;
-  --game: #ff9a62; --web: #b597ff; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  --game: #ff9a62; --web: #b597ff; --alat: #5ad1e6; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
   color-scheme: dark;
 }
 
@@ -208,6 +209,7 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .card[data-kat="lab"] { --c: var(--lab); }
 .card[data-kat="game"] { --c: var(--game); }
 .card[data-kat="web"] { --c: var(--web); }
+.card[data-kat="alat"] { --c: var(--alat); }
 .card__media {
   position: relative; aspect-ratio: 16 / 10; background: var(--surface-2); overflow: hidden; display: block;
   width: 100%; padding: 0; border: 0; cursor: pointer; font: inherit; color: inherit;
