@@ -56,6 +56,17 @@ const PROFIL = {
 
 const PROYEK = [
   {
+    repo: "jangkasorong",
+    judul: "Pengukuran Jangka Sorong Otomotif",
+    kategori: "game",
+    mapel: "Dasar-dasar Teknik Otomotif",
+    kelas: "Kelas X · Fase E",
+    deskripsi:
+      "Gim edukasi berlatar bengkel: kenali bagian jangka sorong, baca skala utama dan nonius, lalu ukur diameter luar, diameter dalam, dan kedalaman komponen otomotif lewat 4 misi bertingkat dengan XP dan bintang.",
+    tag: ["Otomotif", "Pengukuran", "Gim"],
+    unggulan: true,
+  },
+  {
     repo: "generatorstoryboard",
     judul: "Generator Rancangan Bahan Ajar",
     kategori: "alat",

@@ -33,7 +33,7 @@
     contohwebsiteumkm: "2026-10-13", cybersecurity: "2026-10-09", bongkarpasangsepedamotor: "2026-10-06",
     tourmasjid: "2026-10-05", labmayafungsigrafik: "2026-10-05", mrbuyung: "2026-10-05",
     simulasimikrotik: "2026-10-05", sosiologi: "2026-10-03", LabMayaSimulasiSuratMasuk: "2026-10-03",
-    generatorstoryboard: "2026-11-03",
+    generatorstoryboard: "2026-11-03", jangkasorong: "2026-11-03",
   };
 
   let items = PROYEK.map((p) => ({
