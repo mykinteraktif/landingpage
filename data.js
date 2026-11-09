@@ -45,7 +45,7 @@ const PROFIL = {
   // Program keahlian / mapel yang sudah dibuatkan media
   bidang: [
     "TJKT", "Teknik Otomotif", "Teknik Ketenagalistrikan", "MPLB", "DKV", "RPL",
-    "Matematika", "Sejarah", "Bahasa Inggris", "Bahasa Jawa", "PAI dan Budi Pekerti",
+    "Geologi Pertambangan", "Matematika", "Sejarah", "Bahasa Inggris", "Bahasa Jawa", "PAI dan Budi Pekerti",
   ],
   sosial: {
     linkedin: "https://www.linkedin.com/in/mohammad-yusron-kholish-711801108/",
@@ -55,6 +55,27 @@ const PROFIL = {
 };
 
 const PROYEK = [
+  {
+    repo: "labmayafiberoptic",
+    judul: "Fiber Optic Fault Finder",
+    kategori: "lab",
+    mapel: "TJKT",
+    kelas: "Fase F",
+    deskripsi:
+      "Simulasi uji OTDR untuk mendeteksi kerusakan kabel fiber optik: ambil tiket gangguan, atur panjang gelombang, range, dan pulse width, jalankan tes, lalu baca trace untuk menemukan titik putus dan redaman.",
+    tag: ["TKJ", "Fiber Optik", "OTDR"],
+    unggulan: true,
+  },
+  {
+    repo: "identifikasimineral",
+    judul: "Identifikasi Mineral Berdasarkan Sifat Fisik",
+    kategori: "lab",
+    mapel: "Geologi Pertambangan",
+    kelas: "Fase F (Kelas XI–XII)",
+    deskripsi:
+      "Jadi asisten geolog di laboratorium eksplorasi: amati warna dan kilap, lakukan uji cerat, kekerasan, dan kemagnetan untuk membuktikan identitas sampel magnetit, hematit, dan pirit.",
+    tag: ["Geologi", "Mineral", "Skala Mohs"],
+  },
   {
     repo: "jangkasorong",
     judul: "Pengukuran Jangka Sorong Otomotif",

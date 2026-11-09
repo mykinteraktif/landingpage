@@ -37,6 +37,7 @@
     tourmasjid: "2026-10-05", labmayafungsigrafik: "2026-10-05", mrbuyung: "2026-10-05",
     simulasimikrotik: "2026-10-05", sosiologi: "2026-10-03", LabMayaSimulasiSuratMasuk: "2026-10-03",
     generatorstoryboard: "2026-11-03", jangkasorong: "2026-11-03",
+    identifikasimineral: "2026-11-04", labmayafiberoptic: "2026-11-09",
   };
 
   let items = PROYEK.map((p) => ({
