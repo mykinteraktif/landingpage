@@ -16,8 +16,11 @@
     web: "Website & RPL",
     alat: "Alat Guru",
   };
-  const CACHE_KEY = "myk-repos-v2";
-  const CACHE_MS = 60 * 60 * 1000; // 1 jam
+  const CACHE_KEY = "myk-repos-v3";
+  const META_KEY = "myk-meta-v1";
+  const CACHE_MS = 5 * 60 * 1000; // data GitHub dianggap segar selama 5 menit
+  const SYNC_MS = 5 * 60 * 1000; // cek ulang otomatis tiap 5 menit selama halaman terbuka
+  const DI_PAGES = location.hostname === `${PROFIL.github}.github.io`;
 
   const $ = (s) => document.querySelector(s);
   const grid = $("#grid");
@@ -70,10 +73,14 @@
 
   /* ---------- render ---------- */
   function kartu(p) {
-    const media = p.thumb
-      ? `<img src="assets/thumbs/${esc(p.thumb)}" alt="Tampilan ${esc(p.judul)}" loading="lazy" width="640" height="400"
+    // thumb: nama file di assets/thumbs/, atau URL lengkap (gambar og:image repo baru)
+    const src = p.thumb && (/^(https?:)?\/\//.test(p.thumb) || p.thumb.startsWith("/") ? p.thumb : `assets/thumbs/${p.thumb}`);
+    const media = src
+      ? `<img src="${esc(src)}" alt="Tampilan ${esc(p.judul)}" loading="lazy" width="640" height="400"
            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card__ph',textContent:'${esc(inisial(p.judul))}'}))">`
-      : `<div class="card__ph">${esc(inisial(p.judul))}</div>`;
+      : p.live
+        ? `<iframe class="card__frame" src="${esc(p.url)}" loading="lazy" tabindex="-1" aria-hidden="true" title=""></iframe>`
+        : `<div class="card__ph">${esc(inisial(p.judul))}</div>`;
     const tags = (p.tag || []).map((t) => `<li>${esc(t)}</li>`).join("");
     return `
       <article class="card" data-kat="${esc(p.kategori)}">
@@ -227,13 +234,86 @@
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data })); } catch (_) {}
   }
 
-  async function sinkron() {
+  /* Repo baru: baca judul, deskripsi, dan gambar langsung dari halaman lab-nya.
+     Hanya bisa di mykinteraktif.github.io (satu domain dengan semua lab). */
+  function bacaMetaCache() {
+    try { return JSON.parse(localStorage.getItem(META_KEY) || "{}"); } catch (_) { return {}; }
+  }
+  async function ambilMeta(r) {
+    const cache = bacaMetaCache();
+    const kunci = `${r.name}@${r.pushed_at}`;
+    if (cache[kunci]) return cache[kunci];
+    if (!DI_PAGES || !r.has_pages) return {};
+    try {
+      const res = await fetch(`/${r.name}/`, { cache: "no-cache" });
+      if (!res.ok) return {};
+      const doc = new DOMParser().parseFromString(await res.text(), "text/html");
+      const meta = (n) => (doc.querySelector(`meta[name="${n}"], meta[property="${n}"]`) || {}).content || "";
+      const gambar = meta("og:image");
+      const hasil = {
+        judul: (meta("og:title") || doc.title || "").trim(),
+        deskripsi: (meta("description") || meta("og:description")).trim(),
+        gambar: gambar ? new URL(gambar, res.url).href : "",
+        teks: (doc.body ? doc.body.textContent : "").replace(/\s+/g, " ").slice(0, 3000),
+      };
+      cache[kunci] = hasil;
+      try { localStorage.setItem(META_KEY, JSON.stringify(cache)); } catch (_) {}
+      return hasil;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function tebakKategori(teks) {
+    const t = teks.toLowerCase();
+    if (/\b(gim|game|permainan|quest|balap|race)\b/.test(t)) return "game";
+    if (/generator|alat bantu|rancangan bahan ajar|perangkat ajar|untuk guru/.test(t)) return "alat";
+    if (/\b(umkm|toko|website profil|landing page usaha)\b/.test(t)) return "web";
+    return "lab";
+  }
+  function tebakKelas(teks) {
+    const m = teks.match(/kelas\s+(xii|xi|x)\b/i);
+    const f = teks.match(/fase\s+([ef])\b/i);
+    return [m && `Kelas ${m[1].toUpperCase()}`, f && `Fase ${f[1].toUpperCase()}`].filter(Boolean).join(" · ");
+  }
+
+  async function itemBaru(r) {
+    const m = await ambilMeta(r);
+    const semua = [m.judul, m.deskripsi, r.description, m.teks].filter(Boolean).join(" ");
+    const kategori = tebakKategori(semua);
+    return {
+      repo: r.name,
+      judul: m.judul || rapikanNama(r.name),
+      kategori,
+      mapel: "Karya Baru",
+      kelas: tebakKelas(semua),
+      deskripsi: m.deskripsi || r.description || "Karya terbaru, deskripsi menyusul.",
+      tag: ["Baru"],
+      thumb: m.gambar || null,
+      live: r.has_pages && DI_PAGES, // tanpa gambar: tampilkan pratinjau langsung halaman lab
+      video: null,
+      baru: true,
+      update: r.pushed_at,
+      url: r.has_pages ? `https://${USER}.github.io/${r.name}/` : r.homepage || `https://github.com/${USER}/${r.name}`,
+      kode: `https://github.com/${USER}/${r.name}`,
+    };
+  }
+
+  let jejakTerakhir = "";
+  let sinkronPertama = true;
+  let waktuSinkron = 0;
+  let sedangSinkron = false;
+
+  async function sinkron(paksa) {
+    if (sedangSinkron) return;
+    sedangSinkron = true;
     const info = $("#syncInfo");
     try {
-      let repos = readCache();
+      let repos = paksa ? null : readCache();
       if (!repos) {
         const res = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=pushed`, {
           headers: { Accept: "application/vnd.github+json" },
+          cache: "no-cache",
         });
         if (!res.ok) throw new Error(res.status);
         repos = (await res.json()).map((r) => ({
@@ -242,41 +322,57 @@
         }));
         writeCache(repos);
       }
+      waktuSinkron = Date.now();
 
-      const kenal = new Map(items.map((p) => [p.repo.toLowerCase(), p]));
-      let baru = 0;
-      for (const r of repos) {
-        if (r.private || r.fork || ABAIKAN.includes(r.name)) continue;
-        if (r.size === 0) continue; // repo masih kosong: tunggu sampai ada isinya
-        const ada = kenal.get(r.name.toLowerCase());
-        if (ada) {
-          ada.update = r.pushed_at;
-          continue;
+      // hanya render ulang bila ada yang berubah di GitHub
+      const jejak = repos.map((r) => `${r.name}@${r.pushed_at}@${r.size}`).join("|");
+      if (jejak !== jejakTerakhir) {
+        jejakTerakhir = jejak;
+        const kenal = new Map(items.map((p) => [p.repo.toLowerCase(), p]));
+        const tambahan = [];
+        for (const r of repos) {
+          if (r.private || r.fork || ABAIKAN.includes(r.name)) continue;
+          if (r.size === 0) continue; // repo masih kosong: tunggu sampai ada isinya
+          const ada = kenal.get(r.name.toLowerCase());
+          if (ada) {
+            ada.update = r.pushed_at;
+            continue;
+          }
+          tambahan.push(itemBaru(r));
         }
-        baru++;
-        items.push({
-          repo: r.name,
-          judul: rapikanNama(r.name),
-          kategori: "lab",
-          mapel: "Karya Baru",
-          kelas: "",
-          deskripsi: r.description || "Karya terbaru, deskripsi menyusul.",
-          tag: ["Baru"],
-          thumb: null,
-          video: null,
-          update: r.pushed_at,
-          url: r.homepage || `https://${USER}.github.io/${r.name}/`,
-          kode: `https://github.com/${USER}/${r.name}`,
-        });
+        const baru = await Promise.all(tambahan);
+        items.push(...baru);
+        renderAll();
+        if (!sinkronPertama && baru.length) {
+          toast(`Karya baru muncul: ${baru.map((p) => p.judul).join(", ")}`);
+        }
       }
-      renderAll();
-      info.textContent = baru
-        ? `Tersinkron dengan GitHub · ${baru} karya baru terdeteksi`
-        : "Tersinkron dengan GitHub";
+      sinkronPertama = false;
+      tulisStatus();
     } catch (e) {
       info.textContent = "Menampilkan daftar tersimpan (GitHub sedang tidak dapat diakses)";
+    } finally {
+      sedangSinkron = false;
     }
   }
+
+  function tulisStatus() {
+    if (!waktuSinkron) return;
+    const menit = Math.floor((Date.now() - waktuSinkron) / 60000);
+    const jumlahBaru = items.filter((p) => p.baru).length;
+    $("#syncInfo").innerHTML =
+      `<span class="live-dot" aria-hidden="true"></span>Langsung dari GitHub · dicek ${menit < 1 ? "baru saja" : `${menit} menit lalu`}` +
+      (jumlahBaru ? ` · ${jumlahBaru} karya baru` : "");
+  }
+
+  // cek ulang otomatis selama halaman terbuka; jeda saat tab disembunyikan
+  setInterval(() => {
+    if (!document.hidden && !modal.open && Date.now() - waktuSinkron >= SYNC_MS) sinkron(true);
+    tulisStatus();
+  }, 30 * 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && Date.now() - waktuSinkron >= SYNC_MS) sinkron(true);
+  });
 
   /* ---------- event ---------- */
   $("#chips").addEventListener("click", (e) => {

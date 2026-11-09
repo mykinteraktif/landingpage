@@ -7,7 +7,7 @@ Etalase seluruh karya di [github.com/mykinteraktif](https://github.com/mykintera
 - Kartu karya lengkap dengan thumbnail, mapel, kelas/fase, deskripsi, dan tag.
 - Filter kategori (Lab Maya, Game Edukasi, Website & RPL), pencarian, dan urutan (terbaru, A–Z, unggulan).
 - Tombol **Buka**, **Salin tautan** (untuk dibagikan ke grup kelas), dan **Kode sumber**.
-- **Sinkron otomatis dengan GitHub**: repo publik baru langsung muncul sebagai kartu "Karya Baru" tanpa mengubah kode; tanggal pembaruan ikut diperbarui. Repo yang masih kosong (belum ada file) dilewati sampai ada isinya.
+- **Real time dengan GitHub**: daftar repo dicek saat halaman dibuka dan otomatis tiap 5 menit selama halaman terbuka (jeda saat tab disembunyikan). Repo publik baru langsung muncul sebagai kartu "Karya Baru" lengkap dengan judul, deskripsi, kategori (lab/game/alat/web), dan kelas yang dibaca dari halaman lab-nya, plus pratinjau langsung bila belum ada gambar. Tanggal pembaruan ikut diperbarui; repo kosong dilewati sampai ada isinya. Agar kartu otomatis rapi, isi `<title>` dan `<meta name="description">` di `index.html` setiap lab (opsional `og:image` untuk gambar sampul).
 - Bagian **Profil Penyusun**: foto, biodata, portofolio singkat (dihitung otomatis), keahlian, dan tautan LinkedIn/Instagram/GitHub.
 - **Video demo asli** tiap karya (`assets/video/*.mp4`, ±10 detik, total ±1,8 MB):
   - showreel otomatis di hero (karya unggulan),
